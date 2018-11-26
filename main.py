@@ -1,4 +1,100 @@
 #!/usr/bin/env python3
 import AbstractSynthesizer
+import collections
+import re
+import sys
 
-print('hi')
+#Check for Anaconda before proceeding; this guarantees packages not to be missing
+if 'conda' not in sys.version:
+	print("Anaconda is recommended to use dependencies; please make sure that numpy, matplotlib, and Pillow are available")
+
+#import nonstandard packages
+import matplotlib.image as mpimage
+import matplotlib.pyplot as plt
+import numpy as np
+
+#Parse commandline arguments
+inputFileName = sys.argv[0]
+textonNeighborhoodDiameter = sys.argv[1]
+outputSize = sys.argv [2]
+
+#look for help in arguments
+if "-h" in sys.argv or "--help" in sys.argv:
+	print("Usage: <input texture file name> <texton neighborhood diameter> <output size>")
+	print("Optional Postfix Flag: -method=<texture synthesis algorithm>")
+	sys.exit()
+
+#If wrong number of arguments, you need help
+if len(sys.argv) < 3:
+	print("Usage: <input texture file name> <texton neighborhood diameter> <output size>")
+	sys.exit()
+	
+#Can I run the synthesis?
+quitFlag = False
+
+#Check for malformed command line arguments
+#Try load image, if FNF or invlid format, alert
+try: 
+	imageData = mpimage.imread(inputFileName)
+	if imageData is None:
+		raise ValueError("Failed to load image data")
+except:
+	print("Input File Name (arg #1) must be a valid image file name")
+	#If your image doesn't load, you may need Pillow to handle format
+	try:
+		from PIL import Image
+	except:
+		print("Pillow not available, install pillow for non PNG images")
+	quitFlat = True
+
+#Try parse input as number
+try:
+	textonNeighborhoodDiameter = int(textonNeighborhoodDiameter)
+except:
+	print("Texton Neighboorhood Diameter (arg #2) must be an integer")
+	quitFlag = True
+
+#Try parse input as x,y size	
+try:
+	outputSize = (int(outputSize), int(outputSzie)
+except:
+	match = re.match(r"(\d+)[xX](\d+)", outputSize)
+	if match:
+		x = int(match.group(1))
+		y = int(match.group(2))
+		outputSize = (x, y)
+	else:
+		print("Output Size (arg #3) must be an integer or a string matched by r\"\\d+[xX}\\d+\"")
+		quitFlag = True
+	
+#If we fail to handle conditions, then bail out
+if quitFlag:
+	sys.exit()
+
+#
+algorithms = collections.defaultdict(lambda: AbstractSynthesizer(textonNeighborhoodDiameter))
+#TODO: algorithms add
+if len(sys.argv) == 4:
+	algorithmName = re.match(r"match=(\w+)", sys.argv[3]).group(1)
+else:
+	algorithmName = ""
+	
+if algorithmName not in algorithms and algorithmName != "":
+	print("Given algorithm not found, using default algorithm")
+	
+algorithm = algorithms[algorithmName]
+#Validate that the algorithm is a valid synthesizer
+if not isinstance(algorithm, AbstractSynthesizer):
+	print("Something has gone horribly wrong with the algorithm selection, aborting")
+	sys.exit()
+	
+#Generate the new texture
+newImage = algorithm.generateTexture(imageData, outputSize)
+
+ext = inputFileName.split('.')[-1]
+#Special case for no file extension
+if ext == inputFileName:
+	ext = ""
+	
+#Save the image
+plt.imsave("output"+ext, newImage)
