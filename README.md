@@ -14,4 +14,7 @@ To add more synthesis algorithms, simply add an instance to the algorithms dicti
 This is the abstract base class for texture synthesis algorithms; it was written to make switching between algorithms easier when I fail to implement one.
 This class requires that a description and synthesis algorithm be provided.
 
+## Sample Textures
+Sample textures are located in the sample-inputs folder.  Textures given for CMPSC458 are in the CMPSC458 folder and others are in the sample-inputs directory.
+
 ## References
