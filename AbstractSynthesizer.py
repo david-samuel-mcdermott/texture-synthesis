@@ -2,6 +2,9 @@ from abc import ABC
 
 
 class AbstractSynthesizer(ABC):
+	"""
+	The abstract synthesizer defines the interface for texture synthesis implementations
+	"""
 	
 	@abstractmethod
 	def __init__(self, textonNeighborhoodDiameter):
@@ -27,4 +30,12 @@ class AbstractSynthesizer(ABC):
 	"""
 		return None
 		
+	@abstractmethod
+	def getDescription(self):
+	"""
+	This method gives the description for the texture synthesis algorithm
 	
+	Returns:
+		A string describing the algorithm and its assumptions
+	"""
+		return "Abstract Base Class for Texture Synthesis"

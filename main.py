@@ -18,10 +18,17 @@ inputFileName = sys.argv[0]
 textonNeighborhoodDiameter = sys.argv[1]
 outputSize = sys.argv [2]
 
+algorithms = collections.defaultdict(lambda: AbstractSynthesizer(textonNeighborhoodDiameter))
+#TODO: algorithms add
+
 #look for help in arguments
 if "-h" in sys.argv or "--help" in sys.argv:
 	print("Usage: <input texture file name> <texton neighborhood diameter> <output size>")
 	print("Optional Postfix Flag: -method=<texture synthesis algorithm>")
+	print("Available algorithms:")
+	print("Default:", algorithms[""].getDescription()
+	for key, value in algorithms:
+		print(key, ':', value.getDescription())
 	sys.exit()
 
 #If wrong number of arguments, you need help
@@ -50,8 +57,10 @@ except:
 #Try parse input as number
 try:
 	textonNeighborhoodDiameter = int(textonNeighborhoodDiameter)
+	if textonNeighborhoodDiameter % 2 == 0:
+		raise ValueError("Texton Neighborhood Diameter must be odd")
 except:
-	print("Texton Neighboorhood Diameter (arg #2) must be an integer")
+	print("Texton Neighboorhood Diameter (arg #2) must be an odd integer")
 	quitFlag = True
 
 #Try parse input as x,y size	
@@ -71,9 +80,7 @@ except:
 if quitFlag:
 	sys.exit()
 
-#
-algorithms = collections.defaultdict(lambda: AbstractSynthesizer(textonNeighborhoodDiameter))
-#TODO: algorithms add
+
 if len(sys.argv) == 4:
 	algorithmName = re.match(r"match=(\w+)", sys.argv[3]).group(1)
 else:
@@ -89,6 +96,7 @@ if not isinstance(algorithm, AbstractSynthesizer):
 	sys.exit()
 	
 #Generate the new texture
+print("Generating imamge")
 newImage = algorithm.generateTexture(imageData, outputSize)
 
 ext = inputFileName.split('.')[-1]
@@ -97,4 +105,6 @@ if ext == inputFileName:
 	ext = ""
 	
 #Save the image
+print("Saving generated image to", "output"+ext)
 plt.imsave("output"+ext, newImage)
+print("Done!")
