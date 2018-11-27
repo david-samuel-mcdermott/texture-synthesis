@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import AbstractSynthesizer
 import collections
 import re
 import sys
@@ -12,6 +11,9 @@ if 'conda' not in sys.version:
 import matplotlib.image as mpimage
 import matplotlib.pyplot as plt
 import numpy as np
+
+#import custom classes
+from algorithms import AbstractSynthesizer
 
 #Parse commandline arguments
 inputFileName = sys.argv[0]
@@ -26,8 +28,8 @@ if "-h" in sys.argv or "--help" in sys.argv:
 	print("Usage: <input texture file name> <texton neighborhood diameter> <output size>")
 	print("Optional Postfix Flag: -method=<texture synthesis algorithm>")
 	print("Available algorithms:")
-	print("Default:", algorithms[""].getDescription()
-	for key, value in algorithms:
+	print("Default:", algorithms[""].getDescription())
+	for key, value in algorithms.items():
 		print(key, ':', value.getDescription())
 	sys.exit()
 
@@ -65,7 +67,7 @@ except:
 
 #Try parse input as x,y size	
 try:
-	outputSize = (int(outputSize), int(outputSzie)
+	outputSize = (int(outputSize), int(outputSzie))
 except:
 	match = re.match(r"(\d+)[xX](\d+)", outputSize)
 	if match:

@@ -1,2 +1,5 @@
 __pycache__/*
 
+
+/notebook/.ipynb_checkpoints
+/algorithms/__pycache__/*
