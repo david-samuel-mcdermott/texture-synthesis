@@ -14,14 +14,11 @@ import numpy as np
 
 #import custom classes
 from algorithms import AbstractSynthesizer
+from algorithms import EfrosLeungSynthesizer
 
-#Parse commandline arguments
-inputFileName = sys.argv[0]
-textonNeighborhoodDiameter = sys.argv[1]
-outputSize = sys.argv [2]
-
-algorithms = collections.defaultdict(lambda: AbstractSynthesizer(textonNeighborhoodDiameter))
+algorithms = collections.defaultdict(lambda: EfrosLeungSynthesizer.EfrosLeungSynthesizer(3))
 #TODO: algorithms add
+
 
 #look for help in arguments
 if "-h" in sys.argv or "--help" in sys.argv:
@@ -37,6 +34,15 @@ if "-h" in sys.argv or "--help" in sys.argv:
 if len(sys.argv) < 3:
 	print("Usage: <input texture file name> <texton neighborhood diameter> <output size>")
 	sys.exit()
+	
+#Parse commandline arguments
+inputFileName = sys.argv[1]
+textonNeighborhoodDiameter = sys.argv[2]
+outputSize = sys.argv [3]
+
+algorithms = collections.defaultdict(lambda: EfrosLeungSynthesizer.EfrosLeungSynthesizer(textonNeighborhoodDiameter))
+#TODO: algorithms add
+
 	
 #Can I run the synthesis?
 quitFlag = False
@@ -80,10 +86,11 @@ except:
 	
 #If we fail to handle conditions, then bail out
 if quitFlag:
+	print("Provided Arguments", "inputFileName", inputFileName, "texton", textonNeighborhoodDiameter, "outputSize", outputSize)
 	sys.exit()
 
 
-if len(sys.argv) == 4:
+if len(sys.argv) == 5:
 	algorithmName = re.match(r"match=(\w+)", sys.argv[3]).group(1)
 else:
 	algorithmName = ""
@@ -93,7 +100,7 @@ if algorithmName not in algorithms and algorithmName != "":
 	
 algorithm = algorithms[algorithmName]
 #Validate that the algorithm is a valid synthesizer
-if not isinstance(algorithm, AbstractSynthesizer):
+if not isinstance(algorithm, AbstractSynthesizer.AbstractSynthesizer):
 	print("Something has gone horribly wrong with the algorithm selection, aborting")
 	sys.exit()
 	
